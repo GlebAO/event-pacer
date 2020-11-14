@@ -1,0 +1,13 @@
+.digit-inputs__holder {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+
+.digit-inputs__holder > input {
+  width: 4rem;
+  font-size: 2rem;
+  font-weight: bold;
+}

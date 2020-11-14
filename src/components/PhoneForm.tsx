@@ -1,11 +1,11 @@
 import React, { FormEvent, useState } from "react";
-import { useAuthContext } from "../context/AuthContext";
-import { getResource } from "../utils/fetchUtils";
 import { phoneIsValid } from "../utils/validateUtils";
 
-const PhoneForm = () => {
-  const authContext = useAuthContext();
-  const { setAuthInfo} = authContext;
+interface PhoneFormInterface {
+  requestCode: (phone: string) => void
+}
+
+const PhoneForm:React.FC<PhoneFormInterface> = ({requestCode}) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [phoneError, setPhoneError] = useState("");
@@ -19,16 +19,7 @@ const PhoneForm = () => {
     }
     setIsLoading(true);
     try {
-      const request = await getResource(
-        `/auth/requestCode?phone=${encodeURIComponent(phone)}`,
-        "POST"
-      );
-      if (request.result === "Ok") {
-        setAuthInfo({authenticated: false, confirmingPhone: true, phone});
-      }
-      if(request.result === "WaitBeforeSend") {
-        setPhoneError(`Подождите ${request?.smsSessionParameters?.nextSendAfterSec} секунд`);
-      }
+      requestCode(phone);
     } catch (e) {
       setIsLoading(false);
     }
@@ -43,7 +34,7 @@ const PhoneForm = () => {
     <div className="phone-form">
        <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="phone">Телефон</label>
+          <label htmlFor="phone" className="form-label">Телефон</label>
           <input
             autoFocus
             name="phone"
@@ -51,6 +42,7 @@ const PhoneForm = () => {
             type="tel"
             value={phone}
             onChange={(e) => handlePhoneChange(e)}
+            className="form-control"
           />
           {phoneError && <p>{phoneError}</p>}
         </div>
